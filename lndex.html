@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>ELD-101 การออกแบบและพัฒนา e-Learning</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@400;600&family=Sarabun:wght@400;500;700&display=swap');
+
+        :root {
+            /* Light Theme Variables */
+            --bg-color: #f9fbfb;
+            --surface-color: #ffffff;
+            --text-main: #1a2323;
+            --text-muted: #4d5c5c;
+            --primary: #006666;
+            --primary-hover: #004c4c;
+            --accent: #b35900;
+            --accent-hover: #8c4600;
+            --border-color: #d1dddd;
+            --sidebar-bg: #eef2f2;
+            --success: #207e44;
+            --error: #cc3333;
+            --focus-ring: rgba(0, 102, 102, 0.4);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #121616;
+                --surface-color: #1e2424;
+                --text-main: #e8eded;
+                --text-muted: #a4b3b3;
+                --primary: #4db3b3;
+                --primary-hover: #66cccc;
+                --accent: #e67300;
+                --accent-hover: #ff8c1a;
+                --border-color: #334040;
+                --sidebar-bg: #171d1d;
+                --success: #3ab569;
+                --error: #ff6666;
+                --focus-ring: rgba(77, 179, 179, 0.6);
+            }
+        }
+
+        [data-theme="dark"] {
+            --bg-color: #121616;
+            --surface-color: #1e2424;
+            --text-main: #e8eded;
+            --text-muted: #a4b3b3;
+            --primary: #4db3b3;
+            --primary-hover: #66cccc;
+            --accent: #e67300;
+            --accent-hover: #ff8c1a;
+            --border-color: #334040;
+            --sidebar-bg: #171d1d;
+            --success: #3ab569;
+            --error: #ff6666;
+            --focus-ring: rgba(77, 179, 179, 0.6);
+        }
+
+        [data-theme="light"] {
+            --bg-color: #f9fbfb;
+            --surface-color: #ffffff;
+            --text-main: #1a2323;
+            --text-muted: #4d5c5c;
+            --primary: #006666;
+            --primary-hover: #004c4c;
+            --accent: #b35900;
+            --accent-hover: #8c4600;
+            --border-color: #d1dddd;
+            --sidebar-bg: #eef2f2;
+            --success: #207e44;
+            --error: #cc3333;
+            --focus-ring: rgba(0, 102, 102, 0.4);
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 17px;
+            line-height: 1.7;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        h1, h2, h3, h4, h5, h6, .prompt-font {
+            font-family: 'Prompt', sans-serif;
+            color: var(--primary);
+            line-height: 1.4;
+            margin-bottom: 0.8rem;
+        }
+
+        h1 { font-size: 1.8rem; }
+        h2 { font-size: 1.5rem; margin-top: 1.5rem; }
+        h3 { font-size: 1.25rem; margin-top: 1.2rem; }
+
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-bottom: 1rem; padding-left: 2rem; }
+        ul { list-style-type: disc; } /* No emoji bullets */
+
+        a, button, input, select {
+            font-family: inherit;
+            font-size: inherit;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background-color: var(--primary);
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+            display: inline-block;
+        }
+        button:hover { background-color: var(--primary-hover); }
+        button:focus-visible, input:focus-visible, select:focus-visible {
+            outline: 3px solid var(--focus-ring);
+            outline-offset: 2px;
+        }
+        button:disabled {
+            background-color: var(--text-muted);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        button.accent {
+            background-color: var(--accent);
+            color: #fff;
+        }
+        button.accent:hover { background-color: var(--accent-hover); }
+
+        button.outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        button.outline:hover {
+            background-color: var(--primary);
+            color: #fff;
+        }
+
+        input[type="text"], select {
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--surface-color);
+            color: var(--text-main);
+            width: 100%;
+            max-width: 400px;
+            margin-bottom: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1.5rem;
+            background-color: var(--surface-color);
+        }
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: var(--sidebar-bg);
+            font-weight: 600;
+            font-family: 'Prompt', sans-serif;
+            color: var(--primary);
+        }
+
+        /* Layout */
+        #sidebar {
+            width: 300px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            z-index: 100;
+        }
+
+        #sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        #progress-container {
+            margin-top: 10px;
+            background-color: var(--border-color);
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        #progress-bar {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        #nav-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 0;
+            list-style: none;
+        }
+        .nav-item {
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .nav-item:hover, .nav-item:focus {
+            background-color: var(--border-color);
+        }
+        .nav-item.active {
+            background-color: var(--primary);
+            color: #fff;
+            font-weight: bold;
+        }
+        .nav-item-icon {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .completed-icon {
+            color: var(--success);
+            font-weight: bold;
+        }
+        .nav-item.active .completed-icon {
+            color: #fff;
+        }
+
+        #sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        #main-content {
+            margin-left: 300px;
+            flex: 1;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .content-container {
+            width: 100%;
+            max-width: 70ch; /* ~70 characters line length */
+            background-color: var(--surface-color);
+            padding: 40px;
+            border-radius: 0; /* Minimal cards/rounded corners */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        /* Mobile Adjustments */
+        #mobile-header {
+            display: none;
+            padding: 15px 20px;
+            background-color: var(--primary);
+            color: #fff;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 101;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .hamburger-btn {
+            background: transparent;
+            padding: 5px;
+            font-size: 1.5rem;
+        }
+        .hamburger-btn:hover { background: transparent; }
+
+        @media (max-width: 900px) {
+            #sidebar {
+                transform: translateX(-100%);
+            }
+            #sidebar.open {
+                transform: translateX(0);
+            }
+            #main-content {
+                margin-left: 0;
+                padding: 80px 15px 30px 15px; /* space for mobile header */
+            }
+            #mobile-header {
+                display: flex;
+            }
+            .content-container {
+                padding: 20px;
+            }
+        }
+
+        /* Specific Components */
+        .note-box {
+            border-left: 4px solid var(--accent);
+            background-color: var(--sidebar-bg);
+            padding: 15px;
+            margin: 1.5rem 0;
+        }
+        
+        .note-box h4 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+
+        .activity-box, .quiz-box {
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            margin: 2rem 0;
+            background-color: var(--bg-color);
+        }
+
+        .reference {
+            font-size: 0.9em;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: -0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+        .option-label {
+            display: block;
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            background-color: var(--surface-color);
+        }
+        .option-label:hover { background-color: var(--sidebar-bg); }
+        .option-label input { margin-right: 10px; }
+        
+        .feedback {
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+            font-weight: 500;
+        }
+        .feedback.correct {
+            display: block;
+            background-color: rgba(32, 126, 68, 0.1);
+            border: 1px solid var(--success);
+            color: var(--success);
+        }
+        .feedback.incorrect {
+            display: block;
+            background-color: rgba(204, 51, 51, 0.1);
+            border: 1px solid var(--error);
+            color: var(--error);
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .theme-toggle {
+            background: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 5px 10px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+        .theme-toggle:hover {
+            background: var(--border-color);
+            color: var(--text-main);
+        }
+
+        /* Hide screen reader text */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        
+        .error-msg { color: var(--error); font-size: 0.9em; margin-top: 5px; display: block; }
+    </style>
+</head>
+<body>
+
+    <header id="mobile-header">
+        <h1 class="prompt-font" style="font-size: 1.2rem; margin: 0; color: #fff;">ELD-101 e-Learning</h1>
+        <button class="hamburger-btn" aria-label="เปิดเมนู" aria-expanded="false" onclick="toggleSidebar()">
+            <span aria-hidden="true">☰</span>
+        </button>
+    </header>
+
+    <nav id="sidebar" aria-label="สารบัญหลัก">
+        <div id="sidebar-header">
+            <h2 class="prompt-font" style="font-size: 1.2rem; margin: 0;">ELD-101<br>การออกแบบและพัฒนา e-Learning</h2>
+            <div id="progress-container" aria-hidden="true">
+                <div id="progress-bar"></div>
+            </div>
+            <p style="font-size: 0.85rem; margin-top: 5px; color: var(--text-muted);" id="progress-text">ความก้าวหน้า: 0%</p>
+            <button class="theme-toggle" onclick="toggleTheme()" aria-label="สลับโหมดสว่าง/มืด">สลับโหมดสี</button>
+        </div>
+        <ul id="nav-list">
+            <!-- Rendered by JS -->
+        </ul>
+        <div id="sidebar-footer">
+            <button id="restart-btn" class="outline" style="width: 100%;" onclick="handleRestart()">เริ่มเรียนใหม่</button>
+        </div>
+    </nav>
+
+    <main id="main-content">
+        <div class="content-container" id="app-view">
+            <!-- Content Rendered by JS -->
+            <p>กำลังโหลดเนื้อหา...</p>
+        </div>
+    </main>
+
+    <script>
+        // --- Data Definitions ---
+        const TEST_QUESTIONS = [
+            {
+                q: "ผลผลิตหลักที่ได้จากขั้นตอนการวิเคราะห์ (Analysis) ในแบบจำลอง ADDIE คืออะไร?",
+                opts: ["ชิ้นงานสื่อ e-Learning ที่พร้อมใช้งาน", "แผนการประเมินผลผู้เรียน", "การระบุปัญหา ลักษณะผู้เรียน และเป้าหมายการเรียนรู้", "สตอรี่บอร์ด (Storyboard) ของบทเรียน"],
+                ans: 2,
+                exp: "ขั้นตอน Analysis เน้นการทำความเข้าใจบริบท ปัญหา และความต้องการก่อนเริ่มออกแบบ"
+            },
+            {
+                q: "ข้อใดเขียนวัตถุประสงค์เชิงพฤติกรรมที่สามารถวัดผลได้ชัดเจนที่สุด (อ้างอิงระดับ Bloom)?",
+                opts: ["ผู้เรียนมีความรู้ความเข้าใจเกี่ยวกับ HTML", "ผู้เรียนอธิบายโครงสร้างพื้นฐานของ HTML document ได้", "ผู้เรียนตระหนักถึงความสำคัญของ HTML", "ผู้เรียนคุ้นเคยกับแท็ก HTML"],
+                ans: 1,
+                exp: "'อธิบาย' เป็นคำกริยาที่สะท้อนพฤติกรรมที่สังเกตและวัดผลได้ชัดเจนตามหลักของ Bloom"
+            },
+            {
+                q: "ตามหลักเหตุการณ์การสอน 9 ขั้นของ Gagné การใช้คำถาม 'คุณยังจำได้ไหมว่า...?' สอดคล้องกับขั้นตอนใด?",
+                opts: ["ดึงความสนใจ (Gain attention)", "แจ้งวัตถุประสงค์ (Inform objectives)", "กระตุ้นการระลึกความรู้เดิม (Stimulate recall of prior learning)", "ประเมินผลการปฏิบัติ (Assess performance)"],
+                ans: 2,
+                exp: "การถามถึงความรู้ที่ผ่านมาเป็นการดึงความรู้เดิมมาเชื่อมโยงกับเรื่องใหม่"
+            },
+            {
+                q: "สไลด์ที่มีเนื้อหาสาระครบถ้วน แต่ใส่เสียงดนตรีประกอบและภาพการ์ตูนเคลื่อนไหวที่ไม่เกี่ยวกับเนื้อหา ละเมิดหลักการใดของ Mayer?",
+                opts: ["Signaling Principle", "Segmenting Principle", "Coherence Principle", "Spatial Contiguity Principle"],
+                ans: 2,
+                exp: "Coherence Principle ระบุว่าควรตัดสิ่งที่ไม่เกี่ยวข้อง (เสียง ภาพ คำ) ออกเพื่อลดภาระทางปัญญา"
+            },
+            {
+                q: "ปฏิสัมพันธ์ประเภทใด (ตามแนวคิดของ Moore) ที่เกิดขึ้นเมื่อผู้เรียนทำแบบทดสอบแบบโต้ตอบกับระบบ e-Learning?",
+                opts: ["Learner-Instructor", "Learner-Learner", "Learner-Content", "Learner-Interface"],
+                ans: 2,
+                exp: "การมีปฏิสัมพันธ์กับตัวเนื้อหาและกิจกรรมในระบบจัดเป็น Learner-Content interaction"
+            },
+            {
+                q: "ข้อใดถูกต้องเกี่ยวกับเกณฑ์การเข้าถึง (Accessibility) ตามมาตรฐาน WCAG สำหรับข้อความปกติ?",
+                opts: ["ความต่างสี (Contrast ratio) ต้องไม่น้อยกว่า 3:1", "ความต่างสี (Contrast ratio) ต้องไม่น้อยกว่า 4.5:1", "ต้องใช้ตัวอักษรขนาด 16px ขึ้นไปเสมอ", "ห้ามใช้สีแดงในการออกแบบโดยเด็ดขาด"],
+                ans: 1,
+                exp: "WCAG 2.x AA กำหนดให้ข้อความปกติมีความต่างสีอย่างน้อย 4.5:1 เพื่อให้อ่านง่าย"
+            },
+            {
+                q: "การใช้แบบทดสอบสั้นๆ ท้ายบทเพื่อตรวจสอบความเข้าใจและให้ข้อมูลย้อนกลับทันที จัดเป็นการประเมินประเภทใด?",
+                opts: ["Summative Evaluation", "Formative Evaluation", "Norm-referenced Evaluation", "Diagnostic Evaluation"],
+                ans: 1,
+                exp: "Formative Evaluation คือการประเมินเพื่อพัฒนา เกิดขึ้นระหว่างเรียนเพื่อให้ feedback แก่ผู้เรียน"
+            },
+            {
+                q: "ผู้เรียนนำความรู้จากการอบรมเรื่องการเขียนโค้ดไปใช้สร้างเว็บไซต์ของโรงเรียนจริง จัดเป็นการประเมินผลระดับใดของ Kirkpatrick?",
+                opts: ["Level 1: Reaction", "Level 2: Learning", "Level 3: Behavior", "Level 4: Results"],
+                ans: 2,
+                exp: "Level 3 (Behavior) ประเมินการเปลี่ยนแปลงพฤติกรรมหรือการนำความรู้ไปประยุกต์ใช้ในบริบทจริง"
+            }
+        ];
+
+        const COURSE_STRUCTURE = [
+            { id: 'home', title: 'หน้าแรก', type: 'system' },
+            { id: 'pretest', title: 'ทดสอบก่อนเรียน', type: 'system' },
+            { id: 'm1', title: 'บทที่ 1: ภาพรวม e-Learning และ ADDIE', type: 'module' },
+            { id: 'm2', title: 'บทที่ 2: การออกแบบการสอน', type: 'module' },
+            { id: 'm3', title: 'บทที่ 3: การออกแบบสื่อและกิจกรรม', type: 'module' },
+            { id: 'm4', title: 'บทที่ 4: การวัดผลและข้อมูล', type: 'module' },
+            { id: 'posttest', title: 'ทดสอบหลังเรียน', type: 'system' },
+            { id: 'summary', title: 'สรุปผลการเรียน', type: 'system' }
+        ];
+
+        // --- State Management ---
+        let state = {
+            nickname: '',
+            progress: [],
+            preTestScore: null,
+            postTestScore: null,
+            preTestAnswers: null,
+            postTestAnswers: null,
+            currentView: 'home',
+            moduleScores: { m1: 0, m2: 0, m3: 0, m4: 0 }
+        };
+
+        const STORAGE_KEY = 'eld101_state_v1';
+
+        function loadState() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    state = { ...state, ...JSON.parse(saved) };
+                }
+            } catch (e) {
+                console.warn("ไม่สามารถอ่านข้อมูลจาก localStorage ได้ แต่ระบบจะยังทำงานต่อ", e);
+            }
+        }
+
+        function saveState() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                updateSidebar();
+            } catch (e) {
+                console.warn("ไม่สามารถบันทึกข้อมูลลง localStorage ได้ (อาจเปิด Private Mode)", e);
+            }
+        }
+
+        function markCompleted(id) {
+            if (!state.progress.includes(id)) {
+                state.progress.push(id);
+                saveState();
+            }
+        }
+
+        // --- Utility ---
+        function shuffle(array) {
+            let currentIndex = array.length, randomIndex
